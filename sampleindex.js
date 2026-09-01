@@ -13,6 +13,23 @@ const app = express();
 
 app.use(express.json());
 
+// Read all students
+app.get("/students", (request, response) => {
+    response.send(students);
+});
+
+// Read a single student by ID
+app.get("/students/:id", (request, response) => {
+    const id = parseInt(request.params.id);
+    const student = students.find((s) => s.id === id);
+
+    if (!student) {
+        return response.status(404).send({ message: "Student not found" });
+    }
+
+    response.send(student);
+});
+
 app.post("/students", (request, response) => {
     const newName = request.body.name;
     const newCourse = request.body.course;
