@@ -8,6 +8,7 @@ const students = [
     { id: nextId++, name: "Cara", course: "BSCS" },
 ];
 
+
 const app = express();
 
 app.use(express.json());
