@@ -12,12 +12,12 @@ const app = express();
 
 app.use(express.json());
 
-// GET all students
+
 app.get("/students", (request, response) => {
     response.send(students);
 });
 
-// GET a single student by ID
+
 app.get("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const student = students.find((s) => s.id === id);
@@ -29,7 +29,7 @@ app.get("/students/:id", (request, response) => {
     response.send(student);
 });
 
-// POST - Create a new student
+// Create students
 app.post("/students", (request, response) => {
     const newName = request.body.name;
     const newCourse = request.body.course;
@@ -41,7 +41,7 @@ app.post("/students", (request, response) => {
     response.send(newStudent);
 });
 
-// PUT - Update an existing student by ID
+// Update
 app.put("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const student = students.find((s) => s.id === id);
@@ -61,7 +61,7 @@ app.put("/students/:id", (request, response) => {
     response.send(student);
 });
 
-// DELETE - Remove a student by ID
+// DELETE
 app.delete("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const index = students.findIndex((s) => s.id === id);
