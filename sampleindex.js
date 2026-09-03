@@ -13,12 +13,12 @@ const app = express();
 
 app.use(express.json());
 
-// Read all students
+// Read
 app.get("/students", (request, response) => {
     response.send(students);
 });
 
-// Read a single student by ID
+// Read
 app.get("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const student = students.find((s) => s.id === id);
@@ -30,6 +30,7 @@ app.get("/students/:id", (request, response) => {
     response.send(student);
 });
 
+// Create
 app.post("/students", (request, response) => {
     const newName = request.body.name;
     const newCourse = request.body.course;
@@ -41,6 +42,7 @@ app.post("/students", (request, response) => {
     response.send(newStudent);
 });
 
+// Update
 app.put("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const student = students.find((s) => s.id === id);
@@ -60,6 +62,7 @@ app.put("/students/:id", (request, response) => {
     response.send(student);
 });
 
+// Delete
 app.delete("/students/:id", (request, response) => {
     const id = parseInt(request.params.id);
     const index = students.findIndex((s) => s.id === id);
