@@ -1,4 +1,4 @@
-// src/models/studentModel.js
+
 
 let nextId = 1;
 

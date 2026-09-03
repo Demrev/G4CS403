@@ -1,4 +1,4 @@
-// src/routes/studentRoutes.js
+
 
 const express = require("express");
 
