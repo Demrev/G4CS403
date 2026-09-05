@@ -1,5 +1,3 @@
-
-
 const studentModel = require("../models/studentModel");
 
 const getStudents = (request, response) => {

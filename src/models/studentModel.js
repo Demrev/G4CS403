@@ -1,5 +1,3 @@
-
-
 let nextId = 1;
 
 const students = [
