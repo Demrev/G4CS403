@@ -44,7 +44,9 @@ const getStudent = async (request, response) => {
 
 const createStudent = async (request, response) => {
     try {
-        const { name, course } = request.body;
+        const { name, course } = request.body || {};
+
+        console.log("REQUEST BODY:", request.body);
 
         if (!name || !course) {
             return response.status(400).send({
@@ -58,11 +60,21 @@ const createStudent = async (request, response) => {
         );
 
         response.status(201).send(newStudent);
+
     } catch (error) {
-        console.error(error);
+        console.error("CREATE STUDENT ERROR:");
+        console.error("Message:", error.message);
+        console.error("Code:", error.code);
+        console.error("Detail:", error.detail);
+        console.error("Table:", error.table);
+        console.error("Constraint:", error.constraint);
+        console.error("Stack:", error.stack);
 
         response.status(500).send({
             message: "Database error",
+            error: error.message,
+            code: error.code,
+            detail: error.detail,
         });
     }
 };
