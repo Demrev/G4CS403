@@ -1,57 +1,56 @@
-let nextId = 1;
+const pool = require("../config/database");
 
-const students = [
-    { id: nextId++, name: "Alice", course: "BSCS" },
-    { id: nextId++, name: "Bob", course: "BSIT" },
-    { id: nextId++, name: "Cara", course: "BSCS" },
-];
+const getAllStudents = async () => {
+    const result = await pool.query(
+        "SELECT id, name, course FROM students ORDER BY id"
+    );
 
-const getAllStudents = () => {
-    return students;
+    return result.rows;
 };
 
-const getStudentById = (id) => {
-    return students.find((student) => student.id === id);
+const getStudentById = async (id) => {
+    const result = await pool.query(
+        "SELECT id, name, course FROM students WHERE id = $1",
+        [id]
+    );
+
+    return result.rows[0] || null;
 };
 
-const createStudent = (name, course) => {
-    const newStudent = {
-        id: nextId++,
-        name,
-        course,
-    };
+const createStudent = async (name, course) => {
+    const result = await pool.query(
+        `INSERT INTO students (name, course)
+         VALUES ($1, $2)
+         RETURNING id, name, course`,
+        [name, course]
+    );
 
-    students.push(newStudent);
-
-    return newStudent;
+    return result.rows[0];
 };
 
-const updateStudent = (id, name, course) => {
-    const student = students.find((student) => student.id === id);
+const updateStudent = async (id, name, course) => {
+    const result = await pool.query(
+        `UPDATE students
+         SET
+            name = COALESCE($2, name),
+            course = COALESCE($3, course)
+         WHERE id = $1
+         RETURNING id, name, course`,
+        [id, name, course]
+    );
 
-    if (!student) {
-        return null;
-    }
-
-    if (name) {
-        student.name = name;
-    }
-
-    if (course) {
-        student.course = course;
-    }
-
-    return student;
+    return result.rows[0] || null;
 };
 
-const deleteStudent = (id) => {
-    const index = students.findIndex((student) => student.id === id);
+const deleteStudent = async (id) => {
+    const result = await pool.query(
+        `DELETE FROM students
+         WHERE id = $1
+         RETURNING id, name, course`,
+        [id]
+    );
 
-    if (index === -1) {
-        return null;
-    }
-
-    return students.splice(index, 1)[0];
+    return result.rows[0] || null;
 };
 
 module.exports = {

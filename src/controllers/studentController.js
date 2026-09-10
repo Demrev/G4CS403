@@ -1,64 +1,132 @@
 const studentModel = require("../models/studentModel");
 
-const getStudents = (request, response) => {
-    const students = studentModel.getAllStudents();
+const getStudents = async (request, response) => {
+    try {
+        const students = await studentModel.getAllStudents();
 
-    response.send(students);
-};
+        response.send(students);
+    } catch (error) {
+        console.error(error);
 
-const getStudent = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    const student = studentModel.getStudentById(id);
-
-    if (!student) {
-        return response.status(404).send({
-            message: "Student not found",
+        response.status(500).send({
+            message: "Database error",
         });
     }
-
-    response.send(student);
 };
 
-const createStudent = (request, response) => {
-    const { name, course } = request.body;
+const getStudent = async (request, response) => {
+    try {
+        const id = Number(request.params.id);
 
-    const newStudent = studentModel.createStudent(name, course);
+        if (!Number.isInteger(id) || id <= 0) {
+            return response.status(400).send({
+                message: "Invalid student ID",
+            });
+        }
 
-    response.status(201).send(newStudent);
-};
+        const student = await studentModel.getStudentById(id);
 
-const updateStudent = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { name, course } = request.body;
+        if (!student) {
+            return response.status(404).send({
+                message: "Student not found",
+            });
+        }
 
-    const updatedStudent = studentModel.updateStudent(
-        id,
-        name,
-        course
-    );
+        response.send(student);
+    } catch (error) {
+        console.error(error);
 
-    if (!updatedStudent) {
-        return response.status(404).send({
-            message: "Student not found",
+        response.status(500).send({
+            message: "Database error",
         });
     }
-
-    response.send(updatedStudent);
 };
 
-const deleteStudent = (request, response) => {
-    const id = parseInt(request.params.id);
+const createStudent = async (request, response) => {
+    try {
+        const { name, course } = request.body;
 
-    const deletedStudent = studentModel.deleteStudent(id);
+        if (!name || !course) {
+            return response.status(400).send({
+                message: "Name and course are required",
+            });
+        }
 
-    if (!deletedStudent) {
-        return response.status(404).send({
-            message: "Student not found",
+        const newStudent = await studentModel.createStudent(
+            name,
+            course
+        );
+
+        response.status(201).send(newStudent);
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).send({
+            message: "Database error",
         });
     }
+};
 
-    response.send(deletedStudent);
+const updateStudent = async (request, response) => {
+    try {
+        const id = Number(request.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return response.status(400).send({
+                message: "Invalid student ID",
+            });
+        }
+
+        const { name, course } = request.body;
+
+        const updatedStudent = await studentModel.updateStudent(
+            id,
+            name ?? null,
+            course ?? null
+        );
+
+        if (!updatedStudent) {
+            return response.status(404).send({
+                message: "Student not found",
+            });
+        }
+
+        response.send(updatedStudent);
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).send({
+            message: "Database error",
+        });
+    }
+};
+
+const deleteStudent = async (request, response) => {
+    try {
+        const id = Number(request.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return response.status(400).send({
+                message: "Invalid student ID",
+            });
+        }
+
+        const deletedStudent = await studentModel.deleteStudent(id);
+
+        if (!deletedStudent) {
+            return response.status(404).send({
+                message: "Student not found",
+            });
+        }
+
+        response.send(deletedStudent);
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).send({
+            message: "Database error",
+        });
+    }
 };
 
 module.exports = {
