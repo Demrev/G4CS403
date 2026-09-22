@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
+  "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "db:test": "node src/config/testDatabase.js",
     "db:init": "node src/config/initDatabase.js"
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Demrev/G4CS403.git"
@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/Demrev/G4CS403#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0"
   }
 }
