@@ -1,3 +1,4 @@
+const { isText, isEmail, isPassword } = require("../validations/input");
 const bcrypt = require("bcryptjs");
 
 const authModel = require("../models/authModel");
@@ -55,14 +56,14 @@ const register = async (request, response) => {
 
 
         if (
-            !name ||
-            !course ||
-            !email ||
-            !password
+            !isText(name, 100) ||
+            !isText(course, 50) ||
+            !isEmail(email) ||
+            !isPassword(password)
         ) {
             return response.status(400).send({
                 message:
-                    "Name, course, email and password are required"
+                    "Provide nonblank name (max 100 characters), course (max 50), valid email (max 150), and password (max 72 UTF-8 bytes)"
             });
         }
 
@@ -105,6 +106,9 @@ const register = async (request, response) => {
         });
 
     } catch (error) {
+        if (error.code === "23505" && error.constraint === "students_email_unique") {
+            return response.status(409).send({ message: "Email is already registered" });
+        }
 
         console.error(
             "REGISTER ERROR:",
@@ -130,10 +134,10 @@ const login = async (request, response) => {
         } = request.body || {};
 
 
-        if (!email || !password) {
+        if (!isEmail(email) || !isPassword(password)) {
             return response.status(400).send({
                 message:
-                    "Email and password are required"
+                    "A valid email and nonblank password (max 72 UTF-8 bytes) are required"
             });
         }
 
@@ -144,7 +148,7 @@ const login = async (request, response) => {
             );
 
 
-        if (!student) {
+        if (!student || typeof student.password_hash !== "string") {
             return response.status(401).send({
                 message:
                     "Invalid email or password"
@@ -218,10 +222,10 @@ const refresh = async (
         } = request.body || {};
 
 
-        if (!refreshToken) {
+        if (!isText(refreshToken)) {
             return response.status(400).send({
                 message:
-                    "Refresh token is required"
+                    "Refresh token must be a nonblank string"
             });
         }
 
@@ -292,9 +296,10 @@ const refresh = async (
             error
         );
 
-        response.status(401).send({
-            message:
-                "Invalid or expired refresh token"
+        const invalidToken = ["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"]
+            .includes(error.name);
+        response.status(invalidToken ? 401 : 500).send({
+            message: invalidToken ? "Invalid or expired refresh token" : "Token refresh failed"
         });
     }
 };
@@ -313,10 +318,10 @@ const logout = async (
         } = request.body || {};
 
 
-        if (!refreshToken) {
+        if (!isText(refreshToken)) {
             return response.status(400).send({
                 message:
-                    "Refresh token is required"
+                    "Refresh token must be a nonblank string"
             });
         }
 

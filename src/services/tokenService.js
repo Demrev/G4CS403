@@ -21,6 +21,7 @@ const generateRefreshToken = (student) => {
         },
         process.env.JWT_REFRESH_SECRET,
         {
+            jwtid: crypto.randomUUID(),
             expiresIn: process.env.JWT_REFRESH_EXPIRES || "7d"
         }
     );

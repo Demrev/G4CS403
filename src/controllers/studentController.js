@@ -1,3 +1,4 @@
+const { isText, isStudentId } = require("../validations/input");
 const studentModel = require("../models/studentModel");
 
 const getStudents = async (request, response) => {
@@ -18,7 +19,7 @@ const getStudent = async (request, response) => {
     try {
         const id = Number(request.params.id);
 
-        if (!Number.isInteger(id) || id <= 0) {
+        if (!isStudentId(request.params.id)) {
             return response.status(400).send({
                 message: "Invalid student ID",
             });
@@ -46,11 +47,9 @@ const createStudent = async (request, response) => {
     try {
         const { name, course } = request.body || {};
 
-        console.log("REQUEST BODY:", request.body);
-
-        if (!name || !course) {
+        if (!isText(name, 100) || !isText(course, 50)) {
             return response.status(400).send({
-                message: "Name and course are required",
+                message: "Name and course must be nonblank strings, at most 100 and 50 characters respectively",
             });
         }
 
@@ -72,9 +71,6 @@ const createStudent = async (request, response) => {
 
         response.status(500).send({
             message: "Database error",
-            error: error.message,
-            code: error.code,
-            detail: error.detail,
         });
     }
 };
@@ -83,13 +79,22 @@ const updateStudent = async (request, response) => {
     try {
         const id = Number(request.params.id);
 
-        if (!Number.isInteger(id) || id <= 0) {
+        if (!isStudentId(request.params.id)) {
             return response.status(400).send({
                 message: "Invalid student ID",
             });
         }
 
-        const { name, course } = request.body;
+        const { name, course } = request.body || {};
+        if (
+            (name === undefined && course === undefined) ||
+            (name !== undefined && !isText(name, 100)) ||
+            (course !== undefined && !isText(course, 50))
+        ) {
+            return response.status(400).send({
+                message: "Provide name and/or course as nonblank strings, at most 100 and 50 characters respectively",
+            });
+        }
 
         const updatedStudent = await studentModel.updateStudent(
             id,
@@ -117,7 +122,7 @@ const deleteStudent = async (request, response) => {
     try {
         const id = Number(request.params.id);
 
-        if (!Number.isInteger(id) || id <= 0) {
+        if (!isStudentId(request.params.id)) {
             return response.status(400).send({
                 message: "Invalid student ID",
             });
