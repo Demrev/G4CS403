@@ -1,4 +1,4 @@
-# Group 4 — Students API
+# Group 4 Students API
 
 Our CS403 MCO1 project is a REST API for managing student records. It uses Express and PostgreSQL, with JWT authentication and bcrypt for password hashing. Swagger provides the API documentation and a way to test requests in the browser.
 
