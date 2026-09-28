@@ -9,11 +9,6 @@ Our CS403 MCO1 project is a REST API for managing student records. It uses Expre
 - <img src="https://cdn.simpleicons.org/postgresql/4169E1" width="20" height="20" alt="PostgreSQL"> **PostgreSQL**
 - <img src="https://cdn.simpleicons.org/git/F05032" width="20" height="20" alt="Git"> **Git**, if you will clone the repository
 
-- Node.js 20 or later
-- npm
-- PostgreSQL
-- Git, if you will clone the repository
-
 The commands below use Windows PowerShell. If `npm` is blocked by an execution-policy error, use `npm.cmd` instead.
 
 ## Setup
@@ -159,6 +154,8 @@ All paths use the base URL directly. There is no `/api` prefix.
 Student accounts are created through `/auth/register`. There is currently no `POST /students` route.
 
 All logged-in users can access the student routes. Role-based access and ownership checks are not implemented.
+
+After refreshing, the old refresh token is revoked, but the old access token remains valid until it expires.
 
 ## Input validation
 
